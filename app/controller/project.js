@@ -1,15 +1,16 @@
 const { Controller } = require('egg');
+const MongoDB = require('@sunny-cli/mongdb');
+
+const DB_URL = 'mongodb://www.sunny.com:27017';
+const DB_NAME = 'sunny-cli';
 
 class HomeController extends Controller {
   async getProjectTemplate() {
     const { ctx } = this;
-    ctx.body = [{
-      projectName: 'react',
-      projectVersion: '1.0.0',
-    }, {
-      projectName: 'vue',
-      projectVersion: '1.0.0',
-    }];
+    const mongo = new MongoDB(DB_URL, DB_NAME);
+    let list = await mongo.query('project');
+    list = list.map(item => ({ name: item.name, value: item.npmName }));
+    ctx.body = list;
   }
 }
 
